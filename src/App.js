@@ -1,11 +1,14 @@
 import './App.css';
+import Provider from './Context/Provider';
+import LineChart from './Grafico/Grafico';
 import Calculadora from './calculadora/Calculadora';
 
 function App() {
   return (
-    <div className="App">
-      <Calculadora/>
-    </div>
+    <Provider>
+      <Calculadora />
+      <LineChart />
+    </Provider>
   );
 }
 

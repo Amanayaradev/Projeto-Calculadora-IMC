@@ -11,6 +11,8 @@ module.exports = {
       colors: {
         'main-green': '#4CCC9B',
         'dark-green': '#399660',
+        'table-green': '#EDFAFE',
+        'table-select': '#FFFFFF'
       },
     },
   },

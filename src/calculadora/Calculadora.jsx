@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { format } from "date-fns";
+import React, { useContext, useEffect } from "react";
+import AppContext from "../Context/AppContext";
+import salvarNoLocalStorage from "../LocalStorage/LocalStorage";
 
 export default function Calculadora() {
-  const [height, setHeight] = useState(0);
-  const [weight, setWeight] = useState(0);
-  const [imc, setImc] = useState(0);
-  const [resultado, setResultado] = useState("");
+  const { height, setHeight } = useContext(AppContext);
+  const { weight, setWeight } = useContext(AppContext);
+  const { imc, setImc } = useContext(AppContext);
+  const { resultado, setResultado } = useContext(AppContext);
+  const storedWeights = JSON.parse(localStorage.getItem("peso")) || [];
 
   const handleChangeHeight = ({ target }) => {
     setHeight(target.value);
@@ -37,13 +41,19 @@ export default function Calculadora() {
     } else {
       setResultado("OBESIDADE GRAU 3");
     }
-  }, [imc]);
+  }, [imc, setResultado]);
 
   const calculo = () => {
+    const currentDate = new Date();
+    const dataFormatada = format(currentDate, "yyyy/MM/dd");
+    const weightEntry = { date: dataFormatada, weight: parseFloat(weight) };
+    const updatedWeights = [...storedWeights, weightEntry];
+    salvarNoLocalStorage("peso", updatedWeights);
     setImc(+weight / +(height * height));
+    const imcAtual = imc.toFixed(2);
+    salvarNoLocalStorage("imc", imcAtual);
   };
-  // const exibirImc = () => {
-  // }
+
   return (
     <div className="flex flex-col items-center">
       <div className="mt-10 md:w-fit">
@@ -76,7 +86,7 @@ export default function Calculadora() {
           </div>
         </div>
         <button
-          className="w-28 h-9 rounded hover:bg-dark-green transition duration-150 ease bg-main-green text-white"
+          className="flex justify-center m-auto w-28 h-9 rounded hover:bg-dark-green transition duration-150 ease bg-main-green text-white items-center"
           onClick={() => calculo()}
         >
           CALCULAR
@@ -85,10 +95,10 @@ export default function Calculadora() {
       <div className="mt-8">
         {imc ? (
           <div>
-            <p className="text-zinc-400 text-sm md:p-7 md:text-lg">
+            <p className="flex justify-center text-zinc-400 text-sm md:p-7 md:text-lg">
               SEU ESTADO ATUAL É
             </p>
-            <p className="text-[39px] md:text-8xl md:pb-5">{resultado}</p>
+            <p className="text-[39px] md:text-7xl md:pb-5">{resultado}</p>
             {/* <p className='text-zinc-400 text-sm'>SEU PESO IDEAL É</p> */}
             {/* <p className='text-[39px]'>{resultado}</p> */}
           </div>
@@ -96,6 +106,39 @@ export default function Calculadora() {
           "adicione sua altura e peso"
         )}
       </div>
+      {!imc && (
+        <table className="table-auto mt-9">
+          <thead>
+            <tr className="bg-table-green text-sm md:p-7 md:text-lg">
+              <th className="p-3">RESULTADO |</th>
+              <th>IMC |</th>
+              <th>PESO</th>
+            </tr>
+          </thead>
+          <tbody className=" flex-auto text-center">
+            <tr className="text-sm md:p-7 md:text-lg">
+              <td className="p-4">Magreza</td>
+              <td className="p-4">&lt; 18.5</td>
+              <td className="p-4">&lt; 50.4 Kg</td>
+            </tr>
+            <tr className="text-sm md:p-7 md:text-lg">
+              <td className="p-4">Normal</td>
+              <td className="p-4">18.5 a 24.9</td>
+              <td className="p-4">50.4 a 67.8 Kg</td>
+            </tr>
+            <tr className="text-sm md:p-7 md:text-lg">
+              <td className="p-4">Sobrepeso</td>
+              <td className="p-4">24.9 a 30</td>
+              <td className="p-4">67.8 a 81.7 Kg</td>
+            </tr>
+            <tr className="text-sm md:p-7 md:text-lg">
+              <td className="p-4">Obesidade</td>
+              <td className="p-4">&gt; 30</td>
+              <td className="p-4">&gt; 81.7 Kg</td>
+            </tr>
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
