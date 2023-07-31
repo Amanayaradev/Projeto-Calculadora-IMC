@@ -4,15 +4,11 @@ import ApexChart from 'react-apexcharts';
 export default function Chart() {
   const data = [10, 41, 35, 51, 49, 62, 69, 91, 148];
   // JSON.parse(localStorage.getItem(chave))
-  const peso = JSON.parse(localStorage.getItem('peso'))
-  console.log(peso)
-  const weights = [
-    { "date": "2023-07-25", "weight": 70 },
-    { "date": "2023-07-26", "weight": 68 },
-    { "date": "2023-07-27", "weight": 67 },
-  ];
+  const weights = JSON.parse(localStorage.getItem('peso')) || [];
+  console.log('wheits', weights)
 
   const dates = weights.map(item => item.date);
+  console.log('date', dates)
   const weightValues = weights.map(item => item.weight);
 
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
@@ -20,14 +16,14 @@ export default function Chart() {
   const options = {
     chart: {
       animations: {
-        enabled: false, // Disable animations for smoother interactivity
+        enabled: false
       },
       toolbar: {
-        show: true, // Show the chart toolbar
+        show: true
       },
     },
     xaxis: {
-      categories: months, // Months as categories
+      categories: months
     },
     yaxis: {
       tooltip: {
@@ -55,9 +51,13 @@ export default function Chart() {
   const series = [
     {
       name: 'Data and Weight', // Series name for the legend
-      data: data.map((value, index) => ({ x: months[index], y: weightValues[index] || 0 })), // Use weight values in the series data
+      data: weights.map((value, index) => ({ x: dates[index], y: weightValues[index] || 0 }))
     },
   ];
 
-  return <ApexChart options={options} series={series} type="scatter" height={350} width={500} />;
+  return (
+    <div className='grid'>
+      <ApexChart options={options} series={series} type="line" height={350} width={500} />
+    </div>
+  );
 }

@@ -55,90 +55,53 @@ export default function Calculadora() {
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="mt-10 md:w-fit">
-        <h1 className="text-3xl font-bold underline md:text-5xl md:pb-5">
-          {" "}
-          CALCULADORA IMC
-        </h1>
-        <div className="flex flex-col gap-5 mt-8 mb-5 items-center md:text-3xl md:pb-5">
-          <div className="flex justify-between w-72 items-center relative md:w-full">
-            <label htmlFor="height">Height</label>
-            <input
-              className="form-input rounded-full border-0 shadow drop-shadow-md focus:ring-0 placeholder:text-zinc-400 w-52 flex placeholder:text-end placeholder:pr-4 placeholder:font-normal md:w-80 md:placeholder:pr-8  font-medium p-5"
-              onChange={handleChangeHeight}
-              name="height"
-              type="number"
-              placeholder="1.65"
-            />
-            <span className="absolute right-2">M</span>
-          </div>
-          <div className="flex justify-between w-72 items-center relative md:w-full">
-            <label htmlFor="weight">Weight</label>
-            <input
-              className="form-input rounded-full border-0 shadow drop-shadow-md focus:ring-0 placeholder:text-zinc-400 w-52 flex placeholder:text-end placeholder:pr-4 placeholder:font-normal md:w-80 md:placeholder:pr-8 font-medium p-5"
-              onChange={handleChangeWeight}
-              name="weight"
-              type="number"
-              placeholder="52.0"
-            />
-            <span className="absolute right-1">Kg</span>
-          </div>
+    <div>
+      <h1 className="text-3xl text-center font-bold md:text-5xl md:pb-5">
+        {" "}
+        CALCULADORA IMC
+      </h1>
+      <div className="flex flex-col gap-5 mt-8 m-auto md:text-3xl md:pb-5">
+        <div className="flex justify-between items-center relative md:w-full">
+          <label htmlFor="height">Height</label>
+          <input
+            className="form-input rounded-full border-0 shadow drop-shadow-md focus:ring-0 placeholder:text-zinc-400 w-52 flex placeholder:text-end placeholder:pr-4 placeholder:font-normal md:w-80 md:placeholder:pr-8  font-medium p-5"
+            onChange={handleChangeHeight}
+            name="height"
+            type="number"
+            placeholder="1.65"
+          />
+          <span className="absolute right-2">M</span>
         </div>
-        <button
-          className="flex justify-center m-auto w-28 h-9 rounded hover:bg-dark-green transition duration-150 ease bg-main-green text-white items-center"
-          onClick={() => calculo()}
-        >
-          CALCULAR
-        </button>
+        <div className="flex justify-between items-center relative">
+          <label htmlFor="weight">Weight</label>
+          <input
+            className="form-input rounded-full border-0 shadow drop-shadow-md focus:ring-0 placeholder:text-zinc-400 w-52 flex placeholder:text-end placeholder:pr-4 placeholder:font-normal md:w-80 md:placeholder:pr-8 font-medium p-5"
+            onChange={handleChangeWeight}
+            name="weight"
+            type="number"
+            placeholder="52.0"
+          />
+          <span className="absolute right-1">Kg</span>
+        </div>
       </div>
-      <div className="mt-8">
+      <button
+        className="flex mt-8 justify-center m-auto pr-10 pl-10 pt-4 pb-4 rounded hover:bg-dark-green transition duration-150 ease bg-main-green text-white items-center"
+        onClick={() => calculo()}
+      >
+        CALCULAR
+      </button>
+      <div className="mt-8 text-center">
         {imc ? (
           <div>
             <p className="flex justify-center text-zinc-400 text-sm md:p-7 md:text-lg">
               SEU ESTADO ATUAL É
             </p>
             <p className="text-[39px] md:text-7xl md:pb-5">{resultado}</p>
-            {/* <p className='text-zinc-400 text-sm'>SEU PESO IDEAL É</p> */}
-            {/* <p className='text-[39px]'>{resultado}</p> */}
           </div>
         ) : (
           "adicione sua altura e peso"
         )}
       </div>
-      {!imc && (
-        <table className="table-auto mt-9">
-          <thead>
-            <tr className="bg-table-green text-sm md:p-7 md:text-lg">
-              <th className="p-3">RESULTADO |</th>
-              <th>IMC |</th>
-              <th>PESO</th>
-            </tr>
-          </thead>
-          <tbody className=" flex-auto text-center">
-            <tr className="text-sm md:p-7 md:text-lg">
-              <td className="p-4">Magreza</td>
-              <td className="p-4">&lt; 18.5</td>
-              <td className="p-4">&lt; 50.4 Kg</td>
-            </tr>
-            <tr className="text-sm md:p-7 md:text-lg">
-              <td className="p-4">Normal</td>
-              <td className="p-4">18.5 a 24.9</td>
-              <td className="p-4">50.4 a 67.8 Kg</td>
-            </tr>
-            <tr className="text-sm md:p-7 md:text-lg">
-              <td className="p-4">Sobrepeso</td>
-              <td className="p-4">24.9 a 30</td>
-              <td className="p-4">67.8 a 81.7 Kg</td>
-            </tr>
-            <tr className="text-sm md:p-7 md:text-lg">
-              <td className="p-4">Obesidade</td>
-              <td className="p-4">&gt; 30</td>
-              <td className="p-4">&gt; 81.7 Kg</td>
-            </tr>
-          </tbody>
-        </table>
-      )}
     </div>
   );
 }
