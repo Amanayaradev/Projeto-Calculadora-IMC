@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { format } from "date-fns";
+import React, { useContext, useEffect } from "react";
+import AppContext from "../Context/AppContext";
+import salvarNoLocalStorage from "../LocalStorage/LocalStorage";
 
 export default function Calculadora() {
-  const [height, setHeight] = useState(0);
-  const [weight, setWeight] = useState(0);
-  const [imc, setImc] = useState(0);
-  const [resultado, setResultado] = useState("");
+  const { height, setHeight } = useContext(AppContext);
+  const { weight, setWeight } = useContext(AppContext);
+  const { imc, setImc } = useContext(AppContext);
+  const { resultado, setResultado } = useContext(AppContext);
+  const storedWeights = JSON.parse(localStorage.getItem("peso")) || [];
 
   const handleChangeHeight = ({ target }) => {
     setHeight(target.value);
@@ -37,60 +41,62 @@ export default function Calculadora() {
     } else {
       setResultado("OBESIDADE GRAU 3");
     }
-  }, [imc]);
+  }, [imc, setResultado]);
 
   const calculo = () => {
+    const currentDate = new Date();
+    const dataFormatada = format(currentDate, "yyyy/MM/dd");
+    const weightEntry = { date: dataFormatada, weight: parseFloat(weight) };
+    const updatedWeights = [...storedWeights, weightEntry];
+    salvarNoLocalStorage("peso", updatedWeights);
     setImc(+weight / +(height * height));
+    const imcAtual = imc.toFixed(2);
+    salvarNoLocalStorage("imc", imcAtual);
   };
-  // const exibirImc = () => {
-  // }
+
   return (
-    <div className="flex flex-col items-center">
-      <div className="mt-10 md:w-fit">
-        <h1 className="text-3xl font-bold underline md:text-5xl md:pb-5">
-          {" "}
-          CALCULADORA IMC
-        </h1>
-        <div className="flex flex-col gap-5 mt-8 mb-5 items-center md:text-3xl md:pb-5">
-          <div className="flex justify-between w-72 items-center relative md:w-full">
-            <label htmlFor="height">Height</label>
-            <input
-              className="form-input rounded-full border-0 shadow drop-shadow-md focus:ring-0 placeholder:text-zinc-400 w-52 flex placeholder:text-end placeholder:pr-4 placeholder:font-normal md:w-80 md:placeholder:pr-8  font-medium p-5"
-              onChange={handleChangeHeight}
-              name="height"
-              type="number"
-              placeholder="1.65"
-            />
-            <span className="absolute right-2">M</span>
-          </div>
-          <div className="flex justify-between w-72 items-center relative md:w-full">
-            <label htmlFor="weight">Weight</label>
-            <input
-              className="form-input rounded-full border-0 shadow drop-shadow-md focus:ring-0 placeholder:text-zinc-400 w-52 flex placeholder:text-end placeholder:pr-4 placeholder:font-normal md:w-80 md:placeholder:pr-8 font-medium p-5"
-              onChange={handleChangeWeight}
-              name="weight"
-              type="number"
-              placeholder="52.0"
-            />
-            <span className="absolute right-1">Kg</span>
-          </div>
+    <div>
+      <h1 className="text-3xl text-center font-bold md:text-5xl md:pb-5">
+        {" "}
+        CALCULADORA IMC
+      </h1>
+      <div className="flex flex-col gap-5 mt-8 m-auto md:text-3xl md:pb-5">
+        <div className="flex justify-between items-center relative md:w-full">
+          <label htmlFor="height">Height</label>
+          <input
+            className="form-input rounded-full border-0 shadow drop-shadow-md focus:ring-0 placeholder:text-zinc-400 w-52 flex placeholder:text-end placeholder:pr-4 placeholder:font-normal md:w-80 md:placeholder:pr-8  font-medium p-5"
+            onChange={handleChangeHeight}
+            name="height"
+            type="number"
+            placeholder="1.65"
+          />
+          <span className="absolute right-2">M</span>
         </div>
-        <button
-          className="w-28 h-9 rounded hover:bg-dark-green transition duration-150 ease bg-main-green text-white"
-          onClick={() => calculo()}
-        >
-          CALCULAR
-        </button>
+        <div className="flex justify-between items-center relative">
+          <label htmlFor="weight">Weight</label>
+          <input
+            className="form-input rounded-full border-0 shadow drop-shadow-md focus:ring-0 placeholder:text-zinc-400 w-52 flex placeholder:text-end placeholder:pr-4 placeholder:font-normal md:w-80 md:placeholder:pr-8 font-medium p-5"
+            onChange={handleChangeWeight}
+            name="weight"
+            type="number"
+            placeholder="52.0"
+          />
+          <span className="absolute right-1">Kg</span>
+        </div>
       </div>
-      <div className="mt-8">
+      <button
+        className="flex mt-8 justify-center m-auto pr-10 pl-10 pt-4 pb-4 rounded hover:bg-dark-green transition duration-150 ease bg-main-green text-white items-center"
+        onClick={() => calculo()}
+      >
+        CALCULAR
+      </button>
+      <div className="mt-8 text-center">
         {imc ? (
           <div>
-            <p className="text-zinc-400 text-sm md:p-7 md:text-lg">
+            <p className="flex justify-center text-zinc-400 text-sm md:p-7 md:text-lg">
               SEU ESTADO ATUAL É
             </p>
-            <p className="text-[39px] md:text-8xl md:pb-5">{resultado}</p>
-            {/* <p className='text-zinc-400 text-sm'>SEU PESO IDEAL É</p> */}
-            {/* <p className='text-[39px]'>{resultado}</p> */}
+            <p className="text-[39px] md:text-7xl md:pb-5">{resultado}</p>
           </div>
         ) : (
           "adicione sua altura e peso"
